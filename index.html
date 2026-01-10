@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .container {
+            width: 600px;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin-top: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 15px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #ecf0f1;
+        }
+
+        .search {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Library Management System</h2>
+
+    <!-- Add Book Form -->
+    <form id="bookForm">
+        <input type="text" id="title" placeholder="Book Title" required>
+        <input type="text" id="author" placeholder="Author" required>
+        <input type="text" id="subject" placeholder="Subject" required>
+        <input type="date" id="date" required>
+        <button type="submit">Add Book</button>
+    </form>
+
+    <!-- Search -->
+    <input class="search" type="text" id="search" placeholder="Search by Title or Author">
+
+    <!-- Book List -->
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Subject</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="bookList"></tbody>
+    </table>
+
+</div>
+
+<script>
+    let books = [];
+    let displayCount = 5;
+
+    // Submit Event - Add Book
+    document.getElementById("bookForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        let book = {
+            title: title.value,
+            author: author.value,
+            subject: subject.value,
+            date: date.value
+        };
+
+        books.push(book);
+        this.reset();
+        displayBooks();
+    });
+
+    // Input Event - Search
+    document.getElementById("search").addEventListener("input", displayBooks);
+
+    // Scroll Event - Load More
+    window.addEventListener("scroll", function() {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+            displayCount += 5;
+            displayBooks();
+        }
+    });
+
+    function displayBooks() {
+        let list = document.getElementById("bookList");
+        list.innerHTML = "";
+
+        let keyword = search.value.toLowerCase();
+
+        let filtered = books.filter(book =>
+            book.title.toLowerCase().includes(keyword) ||
+            book.author.toLowerCase().includes(keyword)
+        );
+
+        filtered.slice(0, displayCount).forEach((book, index) => {
+            let row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${book.title}</td>
+                <td>${book.author}</td>
+                <td>${book.subject}</td>
+                <td>${book.date}</td>
+                <td><button onclick="deleteBook(${index})">Delete</button></td>
+            `;
+
+            list.appendChild(row);
+        });
+    }
+
+    // Click Event - Delete Book
+    function deleteBook(index) {
+        books.splice(index, 1);
+        displayBooks();
+    }
+</script>
+
+</body>
+</html>
